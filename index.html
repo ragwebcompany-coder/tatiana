@@ -1,0 +1,764 @@
+﻿<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Elite Physiotherapy by Tatiana Gkouwir</title>
+<meta name="description" content="Elite Physiotherapy by Tatiana Gkouwir - Κέντρο Φυσικοθεραπείας και Αποκατάστασης με εξατομικευμένη προσέγγιση, manual therapy, dry needling και θεραπευτική άσκηση." />
+<meta name="theme-color" content="#080706" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/premium.css" />
+<style>
+  :root{
+    --ink:#f8f1e7;
+    --ink-2:#d8c9b7;
+    --muted:#a89884;
+    --line:rgba(223,190,132,.22);
+    --paper:#080706;
+    --paper-2:#17120d;
+    --cream:#100c08;
+    --white:#17120d;
+    --accent:#d7a85b;
+    --accent-deep:#b88332;
+    --gold:#f1d69c;
+    --shadow-s:0 14px 36px rgba(0,0,0,.42);
+    --shadow-l:0 34px 90px rgba(0,0,0,.66);
+  }
+
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(circle at 18% 8%, rgba(215,168,91,.18), transparent 30%),
+      radial-gradient(circle at 88% 18%, rgba(255,239,202,.1), transparent 26%),
+      var(--paper);
+    font-family:"Manrope",system-ui,sans-serif;
+  }
+  h1,h2,h3,h4,.brand-txt strong,.foot-brand strong,.hero-meta .m strong,.stat strong{
+    font-family:"Cormorant Garamond",serif;
+  }
+  ::selection{background:var(--gold);color:#100b06}
+  .glow{background:radial-gradient(circle,rgba(215,168,91,.24),transparent 62%)}
+  .progress{background:linear-gradient(90deg,var(--accent),var(--gold))}
+
+  .topbar{background:rgba(8,7,6,.64);border-bottom:1px solid rgba(223,190,132,.12);backdrop-filter:blur(18px)}
+  .topbar.scrolled{background:rgba(8,7,6,.88);border-color:var(--line);box-shadow:0 14px 40px rgba(0,0,0,.45)}
+  .brand-mark{
+    color:#110b05;
+    background:linear-gradient(145deg,var(--gold),var(--accent));
+    border-radius:50%;
+    box-shadow:0 0 0 1px rgba(255,255,255,.14),0 0 34px rgba(215,168,91,.38);
+  }
+  .brand-mark svg{width:34px;height:34px}
+  .brand-txt strong{font-size:24px;letter-spacing:.03em;color:var(--ink)}
+  .brand-txt span{color:var(--muted)}
+  .nav-links a{color:var(--ink-2)}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold)}
+  .nav-phone{color:var(--ink-2);border-color:var(--line)}
+  .hamburger span{background:var(--ink)}
+
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--gold));color:#160e06;border-color:rgba(255,255,255,.16);box-shadow:0 16px 32px rgba(215,168,91,.24)}
+  .btn.primary:hover{background:linear-gradient(135deg,var(--accent-deep),var(--accent));color:#100b06}
+  .btn.ghost{border-color:rgba(248,241,231,.45);color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:#130d07}
+  .btn.light{color:#160e06}
+
+  .hero{
+    min-height:94vh;
+    background:#080706;
+    color:var(--ink);
+    padding-top:136px;
+  }
+  .hero::before{
+    background:
+      linear-gradient(95deg,rgba(8,7,6,.98) 0%,rgba(8,7,6,.9) 44%,rgba(8,7,6,.58) 72%,rgba(8,7,6,.92) 100%),
+      linear-gradient(to bottom,rgba(8,7,6,.12),rgba(8,7,6,.88));
+    z-index:1;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:0;
+    background:url("assets/elite-logo-sign.jpeg") center right 12% / min(54vw,740px) auto no-repeat;
+    opacity:.48;
+    filter:saturate(1.04) contrast(1.08);
+  }
+  .hero .shell{position:relative;z-index:2}
+  .hero-text{max-width:690px}
+  .hero .eyebrow{color:var(--gold);letter-spacing:.16em}
+  .hero h1{font-size:clamp(48px,6.5vw,92px);line-height:.98;font-weight:600;letter-spacing:0}
+  .hero h1 .it{color:var(--gold)}
+  .hero-copy{max-width:610px;color:var(--ink-2)}
+  .hero-logo-panel{
+    margin-top:34px;
+    width:min(520px,100%);
+    border:1px solid var(--line);
+    background:rgba(23,18,13,.78);
+    box-shadow:var(--shadow-s);
+    overflow:hidden;
+  }
+  .hero-logo-panel img{display:block;width:100%;height:188px;object-fit:cover;object-position:center 58%;filter:contrast(1.03) saturate(1.08)}
+  .hero-meta{gap:18px}
+  .hero-meta .m{min-width:150px;padding:18px 20px;border:1px solid var(--line);background:rgba(23,18,13,.62)}
+  .hero-meta .m strong{color:var(--gold);font-size:34px}
+  .hero-meta .m span{color:var(--muted)}
+  .ecg-line{stroke:var(--gold);filter:drop-shadow(0 0 7px rgba(215,168,91,.58))}
+
+  .marquee{background:#070605;border-color:var(--line);color:var(--ink)}
+  .marquee span::after{color:var(--gold)}
+  .section{background:transparent}
+  .kicker{color:var(--gold)}
+  .num{color:var(--accent)}
+  .shead .lead,.intro,p{color:var(--ink-2)}
+  h2 em{color:var(--gold)}
+
+  .about-figure{background:rgba(23,18,13,.74);border:1px solid var(--line);box-shadow:var(--shadow-s)}
+  .about-figure img{height:620px;object-fit:cover;object-position:center 58%;filter:saturate(1.06) contrast(1.05)}
+  .tag{background:rgba(8,7,6,.78);border:1px solid var(--line);backdrop-filter:blur(12px)}
+  .tag strong{color:var(--gold)}
+  .cred-list li{background:rgba(23,18,13,.56);border:1px solid var(--line)}
+  .cred-list svg,.ci-ico,.eico{color:var(--gold)}
+
+  .svc-row{border-color:var(--line)}
+  .svc-row h3{color:var(--ink)}
+  .svc-row:hover h3,.svc-row.open h3{color:var(--gold)}
+  .svc-row:hover .ico,.svc-row.open .ico{background:var(--accent);border-color:var(--accent);color:#120c06}
+  .svc-body-inner{color:var(--ink-2)}
+  .svc-body-inner .feats span{background:rgba(215,168,91,.1);border:1px solid var(--line);color:var(--gold)}
+
+  .exam,.process-card{
+    background:linear-gradient(180deg,rgba(23,18,13,.94),rgba(17,13,9,.94));
+    border:1px solid var(--line);
+    box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
+  }
+  .exam:hover{border-color:var(--accent);box-shadow:var(--shadow-s)}
+  .exam h4,.process-card h3{color:var(--ink)}
+  .exam p,.process-card p{color:var(--muted)}
+  .enum{color:var(--gold)}
+
+  .stats{background:linear-gradient(90deg,#0b0805,#1a1209,#0b0805);border-block:1px solid var(--line)}
+  .stat strong{color:var(--gold)}
+  .stat span{color:var(--ink-2)}
+
+  .process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .process-card{padding:26px;min-height:230px}
+  .process-card .step{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(215,168,91,.16);color:var(--gold);margin-bottom:22px;font-weight:800}
+  .process-card h3{font-size:23px;margin:0 0 12px}
+
+  .hours-aside{background:linear-gradient(180deg,#21160b,#100b07);border:1px solid var(--line);color:var(--ink)}
+  .hrow{border-color:var(--line)}
+  .hrow.today{background:rgba(215,168,91,.12)}
+  .map-card{border-color:var(--line);background:rgba(23,18,13,.82)}
+  .placeholder-map{
+    min-height:420px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:36px;
+    background:
+      linear-gradient(rgba(215,168,91,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(215,168,91,.06) 1px,transparent 1px),
+      radial-gradient(circle at 50% 46%,rgba(215,168,91,.22),transparent 32%),
+      #0b0805;
+    background-size:32px 32px,32px 32px,100% 100%,100% 100%;
+  }
+  .placeholder-map strong{font-family:"Cormorant Garamond",serif;font-size:34px;color:var(--gold);display:block;margin-bottom:10px}
+  .placeholder-map span{color:var(--ink-2);max-width:360px;display:block}
+  .cinfo li{border-color:var(--line)}
+  .cinfo b{color:var(--ink)}
+  .cinfo span{color:var(--muted)}
+
+  footer{background:#080706;border-color:var(--line)}
+  .foot-brand strong{color:var(--gold);letter-spacing:.03em}
+  .foot-nav a:hover,.foot-legal a:hover{color:var(--gold)}
+  .to-top{background:var(--accent);color:#120c06;border-color:var(--gold)}
+
+  @media (max-width:980px){
+    .hero::after{background-size:760px auto;background-position:center bottom 8%;opacity:.22}
+    .process-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:560px){
+    .hero{padding-top:112px;text-align:left}
+    .hero::before{display:block}
+    .hero::after{background-size:560px auto;background-position:center bottom;opacity:.18}
+    .hero .shell{width:calc(100% - 42px)}
+    .hero-text{text-align:left}
+    .hero h1{font-size:42px;line-height:1.04}
+    .hero h1 br{display:block}
+    .hero-copy{font-size:15px}
+    .hero-actions{justify-content:flex-start}
+    .hero-logo-panel img{height:138px}
+    .hero-meta{grid-template-columns:1fr;gap:10px;background:transparent;border:0}
+    .hero-meta .m{padding:14px 16px;text-align:left}
+    .hero-meta .m + .m{border-left:1px solid var(--line)}
+    .about-figure img{height:420px}
+    .process-grid{grid-template-columns:1fr}
+    .placeholder-map{min-height:320px}
+  }
+
+  /* LIGHT THEME OVERRIDE - client preview */
+  :root{
+    --ink:#19130d;
+    --ink-2:#5f5143;
+    --muted:#8b7d6e;
+    --line:rgba(158,119,58,.2);
+    --paper:#fbf6ee;
+    --paper-2:#f1e8dc;
+    --cream:#f5ecdf;
+    --white:#fffdf8;
+    --shadow-s:0 14px 36px rgba(72,46,18,.12);
+    --shadow-l:0 34px 90px rgba(72,46,18,.18);
+  }
+  body{
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.78),rgba(251,246,238,.94)),
+      radial-gradient(circle at 18% 8%, rgba(215,168,91,.18), transparent 30%),
+      radial-gradient(circle at 88% 18%, rgba(255,239,202,.42), transparent 26%),
+      var(--paper);
+    color:var(--ink);
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:url("assets/elite-logo-sign.jpeg") right 5vw center / min(760px,72vw) auto no-repeat;
+    opacity:.08;
+    filter:saturate(.9) contrast(1.05);
+    mix-blend-mode:multiply;
+  }
+  body > *{position:relative;z-index:1}
+  .topbar{background:rgba(255,253,248,.78);border-bottom:1px solid rgba(158,119,58,.16);backdrop-filter:blur(18px)}
+  .topbar.scrolled{background:rgba(255,253,248,.94);border-color:var(--line);box-shadow:0 14px 40px rgba(72,46,18,.12)}
+  .brand-txt strong{color:var(--ink)}
+  .nav-links a,.nav-phone{color:#3a2e22}
+  .nav-phone{background:rgba(255,255,255,.42);border-color:var(--line)}
+  .hamburger span{background:var(--ink)}
+  .btn.ghost{border-color:rgba(91,67,35,.3);color:var(--ink);background:rgba(255,253,248,.48)}
+  .btn.ghost:hover{background:var(--ink);color:#fffaf2}
+  .hero{background:#fbf6ee;color:var(--ink)}
+  .hero::before{background:linear-gradient(95deg,rgba(255,253,248,.98) 0%,rgba(255,253,248,.92) 45%,rgba(255,253,248,.74) 72%,rgba(251,246,238,.95) 100%),linear-gradient(to bottom,rgba(251,246,238,.1),rgba(251,246,238,.96))}
+  .hero::after{opacity:.18;filter:saturate(.94) contrast(1.04)}
+  .hero-copy,.shead .lead,.intro,p{color:var(--ink-2)}
+  .hero-logo-panel,.hero-meta .m,.about-figure,.cred-list li{background:rgba(255,253,248,.78);border-color:var(--line);box-shadow:var(--shadow-s)}
+  .tag{background:rgba(255,253,248,.9);border-color:var(--line)}
+  .marquee{background:#fffaf2;border-color:var(--line);color:var(--ink)}
+  .svc-body-inner .feats span{background:rgba(215,168,91,.12);border:1px solid var(--line);color:#7a5522}
+  .exam,.process-card{background:linear-gradient(180deg,rgba(255,253,248,.96),rgba(248,241,231,.94));box-shadow:0 1px 0 rgba(255,255,255,.75) inset}
+  .stats{background:linear-gradient(90deg,#ead7bb,#fff6e7,#ead7bb);border-block:1px solid var(--line)}
+  .hours-aside{background:linear-gradient(180deg,#fff8ea,#ead6b8);border:1px solid var(--line);color:var(--ink)}
+  .map-card{border-color:var(--line);background:rgba(255,253,248,.86)}
+  .placeholder-map{background:linear-gradient(rgba(215,168,91,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(215,168,91,.08) 1px,transparent 1px),radial-gradient(circle at 50% 46%,rgba(215,168,91,.18),transparent 32%),#fffaf2}
+  footer{background:#fffaf2;border-color:var(--line)}
+  @media (max-width:980px){body::before{background-position:center 18%;background-size:min(620px,92vw) auto;opacity:.06}.hero::after{opacity:.12}}
+  @media (max-width:560px){body::before{background-position:center 110px;background-size:520px auto;opacity:.045}.hero::after{opacity:.1}}
+
+  /* LOGO BACKGROUND REFINEMENT */
+  body::before{
+    background:url("assets/elite-logo-background.jpeg") center top 118px / min(1380px,118vw) auto no-repeat;
+    opacity:.18;
+    filter:saturate(.94) contrast(1.08);
+    mix-blend-mode:multiply;
+  }
+  .hero::after{
+    background:url("assets/elite-logo-background.jpeg") right -18vw center / min(1320px,105vw) auto no-repeat;
+    opacity:.26;
+    filter:saturate(.95) contrast(1.08);
+    mix-blend-mode:multiply;
+  }
+  .hero-logo-panel{display:none!important}
+  .hero-meta{margin-top:36px}
+  @media (max-width:980px){
+    body::before{background-position:center 92px;background-size:1120px auto;opacity:.14}
+    .hero::after{background-position:center bottom 8%;background-size:980px auto;opacity:.2}
+  }
+  @media (max-width:560px){
+    body::before{background-position:center 86px;background-size:760px auto;opacity:.12}
+    .hero::after{background-position:center bottom 14%;background-size:760px auto;opacity:.16}
+  }
+
+  /* HERO LEFT LOGO FINAL FIX */
+  .brand{
+    width:248px;
+    height:96px;
+    padding:0;
+    border:1px solid rgba(158,119,58,.26);
+    border-radius:4px;
+    background:url("assets/elite-sign-logo.jpeg") center 48% / cover no-repeat;
+    box-shadow:0 10px 28px rgba(72,46,18,.12);
+  }
+  .brand-mark,.brand-txt{display:none!important}
+  .topbar .shell.nav{align-items:center;min-height:112px}
+  .hero{padding-top:178px;min-height:96vh}
+  .hero .shell{display:flex!important;justify-content:flex-end;align-items:center;width:100%}
+  .hero-text{max-width:620px;margin-left:auto;padding-left:0;padding-right:clamp(18px,4vw,72px)}
+  .hero::before{
+    background:
+      linear-gradient(90deg,rgba(251,246,238,.14) 0%,rgba(251,246,238,.18) 34%,rgba(251,246,238,.86) 53%,rgba(251,246,238,.98) 100%),
+      linear-gradient(to bottom,rgba(251,246,238,.12),rgba(251,246,238,.82));
+  }
+  .hero::after{
+    background:url("assets/elite-logo-background.jpeg") left clamp(28px,5vw,88px) center / min(820px,50vw) auto no-repeat;
+    opacity:.82;
+    filter:saturate(1.08) contrast(1.18) drop-shadow(0 22px 48px rgba(92,59,20,.18));
+    mix-blend-mode:normal;
+  }
+  body::before{
+    background:url("assets/elite-logo-background.jpeg") left clamp(28px,5vw,88px) top 150px / min(900px,54vw) auto no-repeat;
+    opacity:.1;
+    mix-blend-mode:multiply;
+  }
+  .hero-logo-panel{display:none!important}
+  @media (max-width:980px){
+    .brand{width:210px;height:82px}
+    .topbar .shell.nav{min-height:96px}
+    .hero{padding-top:148px}
+    .hero .shell{justify-content:center}
+    .hero-text{max-width:680px;margin:0 auto;padding-right:0;text-align:left}
+    .hero::before{background:linear-gradient(180deg,rgba(251,246,238,.72),rgba(251,246,238,.92))}
+    .hero::after{background-position:center top 54px;background-size:min(760px,98vw) auto;opacity:.22}
+    body::before{display:none}
+  }
+  @media (max-width:560px){
+    .brand{width:168px;height:66px}
+    .topbar .shell.nav{min-height:82px}
+    .hero{padding-top:124px}
+    .hero::after{background-position:center top 82px;background-size:620px auto;opacity:.16}
+  }
+
+  /* HERO FLIPPED FINAL LAYOUT */
+  .topbar{
+    height:104px;
+    align-items:center;
+  }
+  .topbar.scrolled{
+    height:88px;
+  }
+  .topbar .shell.nav{
+    width:100%;
+    max-width:none;
+    min-height:104px;
+    padding-left:28px;
+    padding-right:30px;
+    gap:28px;
+  }
+  .topbar.scrolled .shell.nav{min-height:88px}
+  .brand{
+    position:relative;
+    flex:0 0 224px;
+    width:224px;
+    height:78px;
+    margin:0;
+    border-radius:6px;
+    background:url("assets/elite-sign-logo.jpeg") center 49% / cover no-repeat;
+    border:1px solid rgba(158,119,58,.28);
+    box-shadow:0 12px 30px rgba(72,46,18,.13),0 1px 0 rgba(255,255,255,.7) inset;
+    overflow:hidden;
+  }
+  .brand::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.34);
+    pointer-events:none;
+  }
+  .topbar.scrolled .brand{
+    flex-basis:196px;
+    width:196px;
+    height:66px;
+  }
+  .nav-links{margin-left:auto}
+  .hero{
+    padding-top:172px;
+    min-height:96vh;
+  }
+  .hero .shell{
+    display:flex!important;
+    justify-content:flex-start!important;
+    align-items:center;
+    width:100%;
+  }
+  .hero-text{
+    max-width:650px;
+    margin-left:0!important;
+    margin-right:auto!important;
+    padding-left:clamp(18px,5vw,86px)!important;
+    padding-right:0!important;
+    text-align:left;
+  }
+  .hero::before{
+    background:
+      linear-gradient(90deg,rgba(251,246,238,.99) 0%,rgba(251,246,238,.95) 42%,rgba(251,246,238,.56) 62%,rgba(251,246,238,.16) 100%),
+      linear-gradient(to bottom,rgba(251,246,238,.16),rgba(251,246,238,.72));
+  }
+  .hero::after{
+    background:url("assets/elite-logo-background.jpeg") right clamp(28px,5vw,92px) center / min(850px,52vw) auto no-repeat;
+    opacity:.9;
+    filter:saturate(1.1) contrast(1.2) drop-shadow(0 24px 54px rgba(92,59,20,.2));
+    mix-blend-mode:normal;
+  }
+  body::before{
+    background:url("assets/elite-logo-background.jpeg") right clamp(28px,5vw,92px) top 150px / min(920px,56vw) auto no-repeat;
+    opacity:.1;
+    mix-blend-mode:multiply;
+  }
+  .hero-meta{justify-content:flex-start}
+  @media (max-width:1100px){
+    .brand{flex-basis:196px;width:196px;height:66px}
+    .nav-links{gap:18px;font-size:12.5px}
+  }
+  @media (max-width:980px){
+    .topbar,.topbar.scrolled{height:92px}
+    .topbar .shell.nav,.topbar.scrolled .shell.nav{min-height:92px;padding-left:22px;padding-right:22px}
+    .brand,.topbar.scrolled .brand{flex-basis:188px;width:188px;height:64px}
+    .hero{padding-top:136px}
+    .hero .shell{justify-content:center!important}
+    .hero-text{max-width:680px;margin:0 auto!important;padding-left:0!important;text-align:left}
+    .hero::before{background:linear-gradient(180deg,rgba(251,246,238,.78),rgba(251,246,238,.94))}
+    .hero::after{background-position:center top 54px;background-size:min(760px,98vw) auto;opacity:.2}
+    body::before{display:none}
+  }
+  @media (max-width:560px){
+    .topbar,.topbar.scrolled{height:78px}
+    .topbar .shell.nav,.topbar.scrolled .shell.nav{min-height:78px;padding-left:16px;padding-right:16px}
+    .brand,.topbar.scrolled .brand{flex-basis:154px;width:154px;height:54px;border-radius:5px}
+    .hero{padding-top:116px}
+    .hero::after{background-position:center top 82px;background-size:620px auto;opacity:.14}
+  }
+
+  /* HEADER LOGO NO CROP FIX */
+  .topbar{
+    height:116px;
+  }
+  .topbar.scrolled{
+    height:96px;
+  }
+  .topbar .shell.nav{
+    min-height:116px;
+    padding-left:26px;
+    padding-right:32px;
+  }
+  .topbar.scrolled .shell.nav{
+    min-height:96px;
+  }
+  .brand,
+  .topbar.scrolled .brand{
+    flex:0 0 104px;
+    width:104px;
+    height:64px;
+    margin:0;
+    background-color:transparent;
+    background-image:url("assets/elite-bp-logo-trimmed.png");
+    background-repeat:no-repeat;
+    background-position:left center;
+    background-size:contain;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    overflow:visible;
+  }
+  .brand::after{display:none!important}
+  @media (max-width:1100px){
+    .brand,.topbar.scrolled .brand{flex-basis:96px;width:96px;height:60px}
+  }
+  @media (max-width:980px){
+    .topbar,.topbar.scrolled{height:96px}
+    .topbar .shell.nav,.topbar.scrolled .shell.nav{min-height:96px;padding-left:18px;padding-right:20px}
+    .brand,.topbar.scrolled .brand{flex-basis:90px;width:90px;height:58px}
+  }
+  @media (max-width:560px){
+    .topbar,.topbar.scrolled{height:82px}
+    .topbar .shell.nav,.topbar.scrolled .shell.nav{min-height:82px;padding-left:12px;padding-right:14px}
+    .brand,.topbar.scrolled .brand{flex-basis:64px;width:64px;height:46px}
+  }
+</style>
+</head>
+<body>
+<div class="glow" id="glow"></div>
+<div class="progress" id="progress"></div>
+<div class="overlay" id="overlay"></div>
+
+<header class="topbar" id="topbar">
+  <div class="shell nav">
+    <a class="brand" href="#top" aria-label="Elite Physiotherapy">
+      <span class="brand-mark">
+        <svg viewBox="0 0 46 46" fill="none" aria-hidden="true">
+          <path d="M13 35V11h15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M13 23h13" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M30 35V19h-8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M23 10c-5 7-5 17 0 26" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand-txt"><strong>Elite Physiotherapy</strong><span>by Tatiana Gkouwir</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">Η Τατιάνα</a>
+      <a href="#services">Υπηρεσίες</a>
+      <a href="#methods">Εξειδίκευση</a>
+      <a href="#hours">Ωράριο</a>
+      <a href="#contact">Επικοινωνία</a>
+    </nav>
+    <div class="nav-side">
+      <a class="nav-phone" href="#contact">Στοιχεία προς συμπλήρωση</a>
+      <a class="btn primary" href="#contact" data-magnetic>Ραντεβού</a>
+      <div class="hamburger" id="hamburger" aria-label="Μενού"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</header>
+
+<aside class="drawer" id="drawer">
+  <a class="dlink" href="#about">Η Τατιάνα <b>01</b></a>
+  <a class="dlink" href="#services">Υπηρεσίες <b>02</b></a>
+  <a class="dlink" href="#methods">Εξειδίκευση <b>03</b></a>
+  <a class="dlink" href="#hours">Ωράριο <b>04</b></a>
+  <a class="dlink" href="#contact">Επικοινωνία <b>05</b></a>
+  <a class="btn primary" href="#contact">Κλείστε ραντεβού</a>
+</aside>
+
+<main id="top">
+<section class="hero">
+  <div class="shell">
+    <div class="hero-text">
+      <div class="eyebrow">Κέντρο Φυσικοθεραπείας &amp; Αποκατάστασης</div>
+      <h1 id="heroH1">
+        <span class="word"><i>Elite</i></span> <span class="word"><i>φροντίδα</i></span><br>
+        <span class="word"><i class="it">για κάθε</i></span> <span class="word"><i class="it">κίνηση.</i></span>
+      </h1>
+      <p class="hero-copy">Σύγχρονη φυσικοθεραπεία από την Τατιάνα Γκουβίρ, με εξατομικευμένη αξιολόγηση, manual therapy, θεραπευτική άσκηση και τεχνικές αποκατάστασης για πόνο, τραυματισμούς και επιστροφή στην καθημερινότητα.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#contact" data-magnetic>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Κλείστε ραντεβού
+        </a>
+        <a class="btn ghost" href="#methods">Δείτε την εξειδίκευση</a>
+      </div>
+      <div class="hero-logo-panel reveal">
+        <img src="assets/elite-logo-sign.jpeg" alt="Elite Physiotherapy by Tatiana Gkouwir λογότυπο" />
+      </div>
+      <div class="hero-meta">
+        <div class="m"><strong>ΠΣΦ</strong><span>Μέλος Πανελλήνιου Συλλόγου Φυσικοθεραπευτών</span></div>
+        <div class="m"><strong>2017</strong><span>ΑΤΕΙ Θεσσαλονίκης - Φυσικοθεραπεία</span></div>
+        <div class="m"><strong>MT</strong><span>Manual therapy, Mulligan, Dry Needling</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="ecg-wrap" aria-hidden="true">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" width="100%" height="120">
+      <path class="ecg-line" pathLength="1000" d="M0,64 H180 C240,64 242,34 302,34 C360,34 362,64 420,64 H540 C590,64 590,24 646,24 C700,24 704,64 760,64 H900 C952,64 952,38 1008,38 C1060,38 1064,64 1120,64 H1440"/>
+    </svg>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marquee">
+    <span>Manual Therapy</span><span>Dry Needling</span><span>Mulligan Therapy</span><span>Αθλητικές κακώσεις</span><span>Λεμφοίδημα</span><span>Σκολίωση</span>
+  </div>
+</div>
+
+<section class="section about" id="about">
+  <div class="shell">
+    <div class="about-grid">
+      <div class="about-figure reveal">
+        <img src="assets/elite-logo-sign.jpeg" alt="Elite Physiotherapy φωτεινή επιγραφή" />
+        <div class="tag"><strong>EP</strong><span>Elite Physiotherapy</span></div>
+      </div>
+      <div class="about-body">
+        <div class="kicker"><span class="num">01</span> Η Φυσικοθεραπεύτρια</div>
+        <h2><em>Τατιάνα Γκουβίρ</em></h2>
+        <p class="intro reveal">Φυσικοθεραπεύτρια με βάση την επιστημονική αξιολόγηση, την εξατομικευμένη θεραπεία και τη σταδιακή επιστροφή στην ασφαλή κίνηση.</p>
+        <p class="reveal">Είναι πτυχιούχος του τμήματος Φυσικοθεραπείας του Αλεξάνδρειου Τεχνολογικού Εκπαιδευτικού Ιδρύματος Θεσσαλονίκης και μέλος του Πανελλήνιου Συλλόγου Φυσικοθεραπευτών. Έχει εργαστεί σε ιδιωτικά κέντρα φυσικοθεραπείας, με κύριο αντικείμενο τις αθλητικές κακώσεις και την αποκατάσταση.</p>
+        <ul class="cred-list reveal">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span><b>Πτυχίο Φυσικοθεραπείας</b> - ΑΤΕΙ Θεσσαλονίκης, 2017</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Μέλος ΠΣΦ</b> - Πανελλήνιος Σύλλογος Φυσικοθεραπευτών</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><span><b>Κλινική εμπειρία</b> - αθλητικές κακώσεις, αποκατάσταση και θεραπευτική άσκηση</span></li>
+        </ul>
+        <a class="btn primary" href="#contact" data-magnetic style="margin-top:32px">Επικοινωνία με το κέντρο</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="shell">
+    <div class="shead reveal">
+      <div>
+        <div class="kicker"><span class="num">02</span> Υπηρεσίες</div>
+        <h2>Φυσικοθεραπεία με <em>προσωπικό πλάνο</em></h2>
+      </div>
+      <p class="lead">Η θεραπεία ξεκινά από αξιολόγηση και προσαρμόζεται στο ιστορικό, τον πόνο, τη λειτουργικότητα και τον στόχο κάθε θεραπευόμενου.</p>
+    </div>
+    <div class="svc-list" id="svcList">
+      <article class="svc-row reveal open">
+        <div class="svc-head"><span class="no">01</span><h3>Μυοσκελετικός πόνος</h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="svc-body"><div class="svc-body-inner">Αντιμετώπιση πόνου στη μέση, στον αυχένα, στον ώμο, στα άκρα και στη σπονδυλική στήλη με συνδυασμό θεραπευτικών τεχνικών και ενεργής αποκατάστασης.<div class="feats"><span>Οσφυαλγία</span><span>Αυχενικό</span><span>Άνω και κάτω άκρο</span></div></div></div>
+      </article>
+      <article class="svc-row reveal">
+        <div class="svc-head"><span class="no">02</span><h3>Αθλητικές κακώσεις</h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="svc-body"><div class="svc-body-inner">Πλάνο αποκατάστασης για τραυματισμούς, χειρουργικές επεμβάσεις και επιστροφή στην αθλητική δράση με σταδιακή φόρτιση και κλινική παρακολούθηση.<div class="feats"><span>Return to sport</span><span>Τραυματισμοί</span><span>Μετεγχειρητική φροντίδα</span></div></div></div>
+      </article>
+      <article class="svc-row reveal">
+        <div class="svc-head"><span class="no">03</span><h3>Manual therapy</h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="svc-body"><div class="svc-body-inner">Κινητοποιήσεις αρθρώσεων, τεχνικές μαλακών μορίων και κλινικός συλλογισμός για τη βελτίωση της κίνησης και τη μείωση των συμπτωμάτων.<div class="feats"><span>Lower limb</span><span>Upper limb</span><span>Spine &amp; SI joint</span></div></div></div>
+      </article>
+      <article class="svc-row reveal">
+        <div class="svc-head"><span class="no">04</span><h3>Θεραπευτική άσκηση</h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="svc-body"><div class="svc-body-inner">Ασκήσεις ενδυνάμωσης, κινητικότητας, σταθεροποίησης και επανεκπαίδευσης, ώστε το αποτέλεσμα της θεραπείας να μεταφέρεται στην καθημερινότητα.<div class="feats"><span>Ενδυνάμωση</span><span>Κινητικότητα</span><span>Πρόληψη</span></div></div></div>
+      </article>
+      <article class="svc-row reveal">
+        <div class="svc-head"><span class="no">05</span><h3>Εξειδικευμένα περιστατικά</h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
+        <div class="svc-body"><div class="svc-body-inner">Υποστήριξη σε λεμφοίδημα, σκλήρυνση κατά πλάκας, σκολίωση και παθήσεις σπονδυλικής στήλης ή άνω άκρων, με βάση την εκπαίδευση και το κλινικό προφίλ της θεραπευόμενης ή του θεραπευόμενου.<div class="feats"><span>Λεμφοίδημα</span><span>Σκολίωση</span><span>ΣΚΠ</span></div></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section exams" id="methods">
+  <div class="shell">
+    <div class="shead reveal">
+      <div>
+        <div class="kicker"><span class="num">03</span> Μετεκπαιδεύσεις</div>
+        <h2>Τεχνικές και σεμινάρια <em>αποκατάστασης</em></h2>
+      </div>
+      <p class="lead">Στοιχεία από το διαθέσιμο βιογραφικό υλικό της Τατιάνας Γκουβίρ.</p>
+    </div>
+    <div class="exam-grid">
+      <article class="exam reveal"><div><span class="enum">01</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6c-2 4-2 8 2 12s8 4 12 2M26 34c2-4 2-8-2-12s-8-4-12-2"/></svg></div></div><div><h4>Manual Therapy</h4><p>Basic examination, lower limb, upper limb, lumbar spine, SI joint, cervical spine, thoracic spine και TMJ.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">02</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 28c6-16 10-16 16 0"/><path d="M12 12h16M20 12v22"/></svg></div></div><div><h4>Clinical Reasoning</h4><p>Κλινικός συλλογισμός, evidence based medicine και μεθοδολογία έρευνας.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">03</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6v22M20 6l-5 5M20 6l5 5M12 34h16"/></svg></div></div><div><h4>Dry Needling</h4><p>Top 30 Dry Needling course από David G. Simons Academy.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">04</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22c4-7 8-7 12 0s8 7 12 0"/><path d="M8 30c4-7 8-7 12 0s8 7 12 0"/></svg></div></div><div><h4>Mulligan Therapy</h4><p>Mobilization with movement, NAOS, PRP's και A &amp; B Part.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">05</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20h28"/><path d="M12 12v16M20 9v22M28 12v16"/></svg></div></div><div><h4>Neurodynamics</h4><p>Νευροδυναμική προσέγγιση και θεραπευτικός χειρισμός νευρικού ιστού.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">06</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8c7 6 7 18 0 24"/><path d="M26 8c-7 6-7 18 0 24"/></svg></div></div><div><h4>BSPTS - Rigo Concept</h4><p>Γνώση για σκολίωση και διαταραχές σπονδυλικής στήλης.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">07</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="20" r="13"/><path d="M20 12v8l5 5"/></svg></div></div><div><h4>Return to sport</h4><p>Επιστροφή στην αθλητική δράση μετά από τραυματισμό ή χειρουργική επέμβαση.</p></div></article>
+      <article class="exam reveal"><div><span class="enum">08</span><div class="eico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 30c4-8 4-12 0-20"/><path d="M20 30c4-8 4-12 0-20"/><path d="M30 30c4-8 4-12 0-20"/></svg></div></div><div><h4>Παθήσεις &amp; συνέδρια</h4><p>Ρευματολογία, λεμφοίδημα, σκλήρυνση κατά πλάκας, σπονδυλική στήλη και άνω άκρα.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="shell stats-grid">
+    <div class="stat reveal"><strong>2017</strong><span>Πτυχίο Φυσικοθεραπείας</span></div>
+    <div class="stat reveal"><strong>ΠΣΦ</strong><span>Επαγγελματική ιδιότητα</span></div>
+    <div class="stat reveal"><strong>3</strong><span>Βασικοί άξονες: αξιολόγηση, θεραπεία, άσκηση</span></div>
+    <div class="stat reveal"><strong>EP</strong><span>Elite Physiotherapy</span></div>
+  </div>
+</section>
+
+<section class="section" id="process">
+  <div class="shell">
+    <div class="shead reveal">
+      <div>
+        <div class="kicker"><span class="num">04</span> Προσέγγιση</div>
+        <h2>Από την πρώτη αξιολόγηση <em>μέχρι την επάνοδο</em></h2>
+      </div>
+      <p class="lead">Μία καθαρή θεραπευτική διαδικασία, ώστε ο θεραπευόμενος να γνωρίζει τι δουλεύουμε και γιατί.</p>
+    </div>
+    <div class="process-grid">
+      <article class="process-card reveal"><span class="step">01</span><h3>Αξιολόγηση</h3><p>Ιστορικό, κλινικός έλεγχος, στόχοι και λειτουργικές ανάγκες.</p></article>
+      <article class="process-card reveal"><span class="step">02</span><h3>Θεραπεία</h3><p>Συνδυασμός χειροθεραπείας, τεχνικών αποκατάστασης και εκπαίδευσης.</p></article>
+      <article class="process-card reveal"><span class="step">03</span><h3>Άσκηση</h3><p>Σταδιακή φόρτιση, κινητικότητα, σταθερότητα και ενδυνάμωση.</p></article>
+      <article class="process-card reveal"><span class="step">04</span><h3>Συνέχεια</h3><p>Οδηγίες, πρόληψη υποτροπών και επιστροφή στη δραστηριότητα.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section hours" id="hours">
+  <div class="shell">
+    <div class="shead reveal">
+      <div>
+        <div class="kicker"><span class="num">05</span> Ωράριο</div>
+        <h2>Ραντεβού με <em>προσωπική εξυπηρέτηση</em></h2>
+      </div>
+      <p class="lead">Το τελικό ωράριο θα ενημερωθεί μόλις σταλούν τα πλήρη στοιχεία λειτουργίας του κέντρου.</p>
+    </div>
+    <div class="hours-grid">
+      <div class="hours-table reveal" id="hoursTable">
+        <div class="hrow" data-day="1"><span class="day">Δευτέρα</span><span class="time">Με ραντεβού</span></div>
+        <div class="hrow" data-day="2"><span class="day">Τρίτη</span><span class="time">Με ραντεβού</span></div>
+        <div class="hrow" data-day="3"><span class="day">Τετάρτη</span><span class="time">Με ραντεβού</span></div>
+        <div class="hrow" data-day="4"><span class="day">Πέμπτη</span><span class="time">Με ραντεβού</span></div>
+        <div class="hrow" data-day="5"><span class="day">Παρασκευή</span><span class="time">Με ραντεβού</span></div>
+        <div class="hrow" data-day="6"><span class="day">Σάββατο</span><span class="time">Κατόπιν συνεννόησης</span></div>
+        <div class="hrow" data-day="0"><span class="day">Κυριακή</span><span class="time closed">Κλειστά</span></div>
+      </div>
+      <div class="hours-aside reveal">
+        <div class="now-status"><span class="dot" id="dotAside"></span><span id="statusAside">Ραντεβού κατόπιν επικοινωνίας</span></div>
+        <p class="now-sub" id="subAside">Το αναλυτικό ωράριο θα συμπληρωθεί στην τελική έκδοση.</p>
+        <div class="live-clock" id="liveClock">--:--</div>
+        <div class="live-date" id="liveDate">&nbsp;</div>
+        <a class="btn light" href="#contact" style="margin-bottom:12px">Ζητήστε ραντεβού</a>
+        <a class="btn outline-light" href="#services">Δείτε υπηρεσίες</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section contact" id="contact">
+  <div class="shell">
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="kicker"><span class="num">06</span> Επικοινωνία</div>
+        <h2>Κλείστε το <em>ραντεβού</em> σας</h2>
+        <p class="clead">Τα τελικά στοιχεία επικοινωνίας και η διεύθυνση θα προστεθούν μόλις σταλούν. Προς το παρόν η σελίδα παρουσιάζει τη νέα αισθητική, το brand και το βασικό περιεχόμενο του Elite Physiotherapy.</p>
+        <ul class="cinfo">
+          <li><div><span class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg></span><div><b>Τηλέφωνο</b><span>Προς συμπλήρωση</span></div></div></li>
+          <li><div><span class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><div><b>Διεύθυνση</b><span>Προς συμπλήρωση</span></div></div></li>
+          <li><div><span class="ci-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span><div><b id="contactToday">Ωράριο σήμερα</b><span id="contactHours">Με ραντεβού</span></div></div></li>
+        </ul>
+        <a class="btn primary" href="#contact" data-magnetic style="margin-top:30px">Αίτημα ραντεβού</a>
+      </div>
+      <div class="map-card reveal">
+        <div class="placeholder-map">
+          <div>
+            <strong>Elite Physiotherapy</strong>
+            <span>Χάρτης και στοιχεία διαδρομής θα προστεθούν όταν επιβεβαιωθεί η διεύθυνση του κέντρου.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="shell">
+    <div class="foot-top">
+      <div class="foot-brand"><strong>Elite Physiotherapy</strong><span>by Tatiana Gkouwir</span></div>
+      <nav class="foot-nav">
+        <a href="#about">Η Τατιάνα</a><a href="#services">Υπηρεσίες</a><a href="#methods">Εξειδίκευση</a><a href="#hours">Ωράριο</a><a href="#contact">Επικοινωνία</a>
+      </nav>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="year"></span> Elite Physiotherapy - Κέντρο Φυσικοθεραπείας &amp; Αποκατάστασης.</span>
+      <span>Στοιχεία επικοινωνίας προς συμπλήρωση.</span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="Επιστροφή στην κορυφή">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+  window.CLINIC_SCHEDULE = {
+    1:[[540,1260]],
+    2:[[540,1260]],
+    3:[[540,1260]],
+    4:[[540,1260]],
+    5:[[540,1260]],
+    6:[[600,840]],
+    0:[]
+  };
+</script>
+<script src="assets/premium.js"></script>
+</body>
+</html>
+
+
+
+
+
+
