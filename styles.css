@@ -762,6 +762,183 @@ a.svc:hover .svc-more { color: var(--navy-ink); transform: translateX(4px); }
   margin: 0 0 1.6rem;
 }
 
+/* ============================================================
+   Photos — lead figure, gallery, home "Ο χώρος μας", lightbox
+   ============================================================ */
+.zoom {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--sand);
+  cursor: zoom-in;
+  border-bottom: 0 !important;
+}
+.zoom img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .7s var(--ease);
+}
+.zoom:hover img { transform: scale(1.035); }
+.zoom:focus-visible { outline: 2px solid var(--navy); outline-offset: 3px; }
+
+.lead-figure {
+  margin: 0 0 clamp(2rem, 4vw, 2.8rem);
+  box-shadow: 0 40px 80px -48px rgba(22, 41, 63, 0.5);
+  border-radius: var(--radius);
+}
+.lead-figure .zoom { aspect-ratio: 3 / 2; }
+.lead-figure.portrait {
+  float: right;
+  width: min(42%, 320px);
+  margin: 0.3rem 0 1.6rem clamp(1.4rem, 3vw, 2.2rem);
+}
+.lead-figure.portrait .zoom { aspect-ratio: 4 / 5; }
+.svc-body > .lead-figure + h2 { padding-top: 0; margin-top: 0; }
+.svc-body > .lead-figure + h2::before { display: none; }
+
+.svc-body h2.gallery-title { clear: both; }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 0.9rem;
+  margin-top: 1.4rem;
+}
+.gallery .zoom { aspect-ratio: 3 / 2; }
+/* A portrait tile spans two rows, so it lines up with two landscape tiles. */
+.gallery .zoom.tall { grid-row: span 2; aspect-ratio: auto; }
+/* Odd tile out: stretch it across the row, or down beside a lone portrait. */
+.gallery .zoom.wide { grid-column: span 2; }
+.gallery .zoom.fill { grid-row: span 2; aspect-ratio: auto; }
+.gallery--tall { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gallery--tall .zoom.tall { grid-row: auto; aspect-ratio: 4 / 5; }
+
+/* Home: the about panel now holds a portrait instead of the logo. */
+.about-media img.about-photo {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 70% 60%;
+  padding: 0;
+}
+
+.space { padding-block: var(--section-y); }
+.space-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+}
+.space-grid .zoom:first-child { grid-row: span 2; }
+.space-grid .zoom { aspect-ratio: 3 / 2; }
+.space-grid .zoom:first-child { aspect-ratio: auto; }
+
+/* Card thumbnails — bleed to the card edges */
+.svc { --svc-pad: clamp(1.8rem, 3vw, 2.4rem); }
+.svc-thumb {
+  display: block;
+  margin: calc(-1 * var(--svc-pad)) calc(-1 * var(--svc-pad)) 1.4rem;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--sand);
+}
+.svc-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--ease);
+}
+.svc-thumb.tall img { object-position: 60% 62%; }
+.svc:hover .svc-thumb img { transform: scale(1.05); }
+
+/* Home hero with photos */
+.hero-split {
+  max-width: var(--container);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  padding-block: 2.5rem 4.5rem;
+}
+.hero-split .hero-title { font-size: clamp(2.5rem, 1.3rem + 3.9vw, 4.4rem); }
+.hero-photos { position: relative; padding: 0 0 3.2rem 2.2rem; }
+.hero-photos img { height: auto; object-fit: cover; border-radius: var(--radius); }
+.hero-photo-main {
+  width: 100%;
+  aspect-ratio: 4 / 4.4;
+  object-position: 62% 50%;
+  box-shadow: 0 50px 90px -45px rgba(22, 41, 63, 0.55);
+}
+.hero-photo-sub {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 48%;
+  aspect-ratio: 3 / 2;
+  border: 6px solid var(--cream);
+  box-shadow: 0 30px 60px -30px rgba(22, 41, 63, 0.6);
+}
+
+/* Photo rows — under the steps, and the home gallery */
+.photo-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.photo-row .zoom { aspect-ratio: 3 / 2; }
+.photo-row--wrap { margin-top: 0; }
+.moments { padding-block: var(--section-y); background: var(--sand); }
+.contact-side .lead-figure { margin-bottom: 1.4rem; }
+
+@media (max-width: 900px) {
+  .hero-split { grid-template-columns: 1fr; padding-top: 3rem; }
+  .hero-photos { max-width: 560px; }
+  .photo-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.lightbox {
+  border: 0;
+  padding: 0;
+  margin: auto;
+  background: transparent;
+  max-width: 96vw;
+  max-height: 94vh;
+  overflow: visible;
+}
+.lightbox::backdrop { background: rgba(13, 24, 38, 0.9); }
+.lightbox img {
+  display: block;
+  max-width: 96vw;
+  max-height: 94vh;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  cursor: zoom-out;
+}
+.lightbox-close {
+  position: fixed;
+  top: 14px; right: 16px;
+  width: 44px; height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--white);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.lightbox-close:hover { background: rgba(255, 255, 255, 0.26); }
+
+@media (max-width: 620px) {
+  .lead-figure.portrait { float: none; width: min(100%, 340px); margin: 0 auto 2rem; }
+  .gallery { grid-template-columns: 1fr; }
+  .gallery .zoom.tall { grid-row: auto; aspect-ratio: 4 / 5; }
+  .gallery .zoom.wide { grid-column: auto; }
+  .gallery .zoom.fill { grid-row: auto; aspect-ratio: 3 / 2; }
+  .gallery--tall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .space-grid { grid-template-columns: 1fr; grid-template-rows: none; }
+  .space-grid .zoom:first-child { grid-row: auto; aspect-ratio: 3 / 2; }
+}
+
 /* Article / service detail layout */
 .svc-detail { padding-block: clamp(2.5rem, 5vw, 4.5rem) var(--section-y); }
 .svc-detail-grid {

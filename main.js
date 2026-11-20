@@ -30,6 +30,26 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  // Photo lightbox — .zoom links open the large image in a <dialog>
+  var zooms = document.querySelectorAll("a.zoom");
+  if (zooms.length && typeof HTMLDialogElement !== "undefined") {
+    var box = document.createElement("dialog");
+    box.className = "lightbox";
+    box.innerHTML = '<button class="lightbox-close" aria-label="Κλείσιμο">×</button><img alt="" />';
+    document.body.appendChild(box);
+    var boxImg = box.querySelector("img");
+    box.addEventListener("click", function () { box.close(); });
+    zooms.forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var thumb = a.querySelector("img");
+        boxImg.src = a.href;
+        boxImg.alt = thumb ? thumb.alt : "";
+        box.showModal();
+      });
+    });
+  }
+
   // Reveal on scroll
   var revealEls = document.querySelectorAll(".reveal");
   // Dev aid / safety: reveal everything at once

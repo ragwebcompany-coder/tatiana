@@ -18,6 +18,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from structure import (  # noqa: E402
     SITE, CONTACT, TBD, SECTIONS, HOME_SERVICES, HOME_STATS, HOME_CREDS,
     HOME_STEPS, STRIP_WORDS, HOME_META,
+    PHOTO_DIR, PHOTO_PORTRAIT, PHOTOS, HOME_PORTRAIT, HOME_SPACE,
+    PHOTO_ALT, CARD_PHOTOS, HOME_HERO, HOME_PROCESS, HOME_GALLERY, CONTACT_PHOTO,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -330,14 +332,83 @@ def footer(depth):
         '    <div class="footer-bottom">',
         '      <p class="footer-copy">© <span id="year">2026</span> %s. Με επιφύλαξη '
         'παντός δικαιώματος.</p>' % meta_text(SITE["name"]),
-        '      <p class="cb-credit">Made by <a href="https://clinicbrain.gr/?utm_source='
+        '      <p class="cb-credit">Made by <a href="https://astramarketing.gr/?utm_source='
         'client-site&amp;utm_medium=footer&amp;utm_campaign=made-by" target="_blank" '
-        'rel="noopener noreferrer">CLINICBRAIN</a></p>',
+        'rel="noopener noreferrer">astra</a></p>',
         '    </div>',
         '  </footer>',
         '  <script src="%smain.js" defer></script>' % r,
         '</body>',
         '</html>',
+    ])
+
+
+# ---------------------------------------------------------------------------
+# Φωτογραφιες
+# ---------------------------------------------------------------------------
+
+def photo_img(name, alt, depth, sizes, cls="", lazy=True):
+    """<img> με μικρη (900px) και μεγαλη (1800px) εκδοχη."""
+    base = "%s%s/%s" % (up(depth), PHOTO_DIR, name)
+    w, h = (1200, 1800) if name in PHOTO_PORTRAIT else (1800, 1200)
+    return ('<img src="%s-sm.webp" srcset="%s-sm.webp %dw, %s.webp %dw" sizes="%s" '
+            'alt="%s" width="%d" height="%d"%s%s />'
+            % (base, base, w // 2, base, w, sizes, esc_attr(alt), w, h,
+               (' class="%s"' % cls) if cls else '',
+               ' loading="lazy" decoding="async"' if lazy else ' fetchpriority="high"'))
+
+
+def photo_link(name, alt, depth, sizes, cls="", lazy=True):
+    """Φωτογραφια που ανοιγει σε μεγεθυνση (βλ. lightbox στο main.js)."""
+    classes = "zoom" + (" tall" if name in PHOTO_PORTRAIT else "") + ((" " + cls) if cls else "")
+    return ('<a class="%s" href="%s%s/%s.webp" aria-label="Μεγέθυνση: %s">%s</a>'
+            % (classes, up(depth), PHOTO_DIR, name, esc_attr(alt),
+               photo_img(name, alt, depth, sizes, lazy=lazy)))
+
+
+def card_thumb(section_slug, page_slug, depth):
+    """Μικρογραφια στην κορυφη μιας καρτας."""
+    key = "%s/%s" % (section_slug, page_slug)
+    name = CARD_PHOTOS.get(key) or (PHOTOS[key]["lead"][0] if key in PHOTOS else None)
+    if not name:
+        return ""
+    cls = "tall" if name in PHOTO_PORTRAIT else ""
+    return ('          <span class="svc-thumb %s">%s</span>'
+            % (cls, photo_img(name, "", depth, "(max-width: 620px) 94vw, 380px")))
+
+
+def photo_tiles(names, depth, sizes="(max-width: 620px) 94vw, 380px"):
+    return "".join(photo_link(n, PHOTO_ALT[n], depth, sizes) for n in names)
+
+
+def lead_figure(photos, depth):
+    if not photos or not photos.get("lead"):
+        return ""
+    name, alt = photos["lead"]
+    portrait = name in PHOTO_PORTRAIT
+    sizes = "(max-width: 620px) 70vw, 320px" if portrait else "(max-width: 820px) 94vw, 760px"
+    return ('        <figure class="lead-figure%s">%s</figure>'
+            % (" portrait" if portrait else "",
+               photo_link(name, alt, depth, sizes, lazy=False)))
+
+
+def gallery(photos, depth):
+    if not photos or not photos.get("gallery"):
+        return ""
+    # Οι καθετες πρωτες: πιανουν δυο σειρες και διπλα τους στοιβαζονται δυο οριζοντιες.
+    tall = [i for i in photos["gallery"] if i[0] in PHOTO_PORTRAIT]
+    wide = [i for i in photos["gallery"] if i[0] not in PHOTO_PORTRAIT]
+    items = tall + wide
+    all_tall = not wide
+    sizes = "(max-width: 620px) 94vw, 380px"
+    # Μονος αριθμος κελιων αφηνει κενο: η τελευταια οριζοντια το γεμιζει.
+    extra = {}
+    if wide and (2 * len(tall) + len(wide)) % 2:
+        extra[wide[-1][0]] = "fill" if (len(tall), len(wide)) == (1, 1) else "wide"
+    tiles = "".join(photo_link(n, a, depth, sizes, cls=extra.get(n, "")) for n, a in items)
+    return "\n".join([
+        '        <h2 class="gallery-title">Φωτογραφίες από το κέντρο</h2>',
+        '        <div class="gallery%s">%s</div>' % (" gallery--tall" if all_tall else "", tiles),
     ])
 
 
@@ -420,6 +491,9 @@ def build_leaf(section, page):
     trail = [("Αρχική", SITE["url"] + "/"),
              (section["title"], "%s/%s/index.html" % (SITE["url"], section["slug"])),
              (page["title"], canonical)]
+    photos = PHOTOS.get("%s/%s" % (section["slug"], page["slug"]))
+    body = [b for b in (lead_figure(photos, 1), render_blocks(page["blocks"]),
+                        gallery(photos, 1)) if b]
     html = [
         head(title, page["lead"], canonical, 1, breadcrumb_schema(trail)),
         nav(1, section["slug"], page["slug"]),
@@ -439,7 +513,7 @@ def build_leaf(section, page):
         '    <section class="svc-detail">',
         '      <div class="container svc-detail-grid">',
         '        <article class="svc-body">',
-        render_blocks(page["blocks"]),
+        "\n".join(body),
         '        </article>',
         aside(section, page),
         '      </div>',
@@ -460,6 +534,7 @@ def build_hub(section):
     for i, page in enumerate(section["pages"], start=1):
         cards += [
         '        <a class="svc reveal" href="%s.html">' % page["slug"],
+        card_thumb(section["slug"], page["slug"], 1),
         '          <span class="svc-num">%02d</span>' % i,
         '          <h3>%s</h3>' % page["title"],
         '          <p>%s</p>' % page["lead"],
@@ -507,7 +582,8 @@ def build_home():
         page = next(p for p in sec[sslug]["pages"] if p["slug"] == pslug)
         svc_cards += [
         '        <a class="svc reveal" href="%s/%s.html">' % (sslug, pslug),
-        '          <span class="svc-icon" aria-hidden="true">%s</span>' % icon,
+        card_thumb(sslug, pslug, 0)
+        or '          <span class="svc-icon" aria-hidden="true">%s</span>' % icon,
         '          <span class="svc-num">%02d</span>' % i,
         '          <h3>%s</h3>' % page["title"],
         '          <p>%s</p>' % page["lead"],
@@ -526,6 +602,7 @@ def build_home():
     for i, page in enumerate(sec["therapeies"]["pages"], start=1):
         ther_cards += [
         '        <a class="svc reveal" href="therapeies/%s.html">' % page["slug"],
+        card_thumb("therapeies", page["slug"], 0),
         '          <span class="svc-num">%02d</span>' % i,
         '          <h3>%s</h3>' % page["title"],
         '          <p>%s</p>' % page["lead"],
@@ -539,7 +616,8 @@ def build_home():
         nav(0, home=True),
         '  <main id="main">',
         '    <section class="hero" id="hero">',
-        '      <div class="hero-inner container">',
+        '      <div class="hero-inner hero-split container">',
+        '       <div class="hero-copy">',
         '        <p class="eyebrow reveal">%s</p>' % SITE["tagline"],
         '        <h1 class="hero-title reveal">Elite Physiotherapy<br /><em>by Tatiana Gkouwir</em></h1>',
         '        <p class="hero-lead reveal">Σύγχρονο κέντρο φυσικοθεραπείας και αποκατάστασης, '
@@ -549,6 +627,12 @@ def build_home():
         '          %s' % cta_primary(0),
         '          <a href="#services" class="btn btn-ghost">Οι Υπηρεσίες μας</a>',
         '        </div>',
+        '       </div>',
+        '       <div class="hero-photos reveal">%s%s</div>' % (
+            photo_img(HOME_HERO[0], PHOTO_ALT[HOME_HERO[0]], 0,
+                      "(max-width: 900px) 94vw, 50vw", cls="hero-photo-main", lazy=False),
+            photo_img(HOME_HERO[1], PHOTO_ALT[HOME_HERO[1]], 0,
+                      "(max-width: 900px) 50vw, 300px", cls="hero-photo-sub", lazy=False)),
         '      </div>',
         '      <div class="hero-scroll" aria-hidden="true"><span></span></div>',
         '    </section>',
@@ -560,8 +644,8 @@ def build_home():
         '    <section class="about" id="about">',
         '      <div class="container about-grid">',
         '        <div class="about-media reveal">',
-        '          <img src="%s" alt="%s — λογότυπο" width="1074" height="938" />'
-        % (SITE["logo"], esc_attr(SITE["name"])),
+        '          %s' % photo_img(HOME_PORTRAIT[0], HOME_PORTRAIT[1], 0,
+                                   "(max-width: 900px) 420px, 40vw", cls="about-photo"),
         '          <div class="about-badge">',
         '            <span class="about-badge-num">Π.Σ.Φ.</span>',
         '            <span class="about-badge-label">Μέλος Πανελληνίου<br />Συλλόγου Φυσικοθεραπευτών</span>',
@@ -594,6 +678,19 @@ def build_home():
         '      </div>',
         '    </section>',
         '',
+        '    <section class="space" id="space">',
+        '      <div class="container">',
+        '        <div class="section-head reveal">',
+        '          <p class="eyebrow">Ο χώρος μας</p>',
+        '          <h2 class="section-title">Ένας χώρος φτιαγμένος<br />για την αποκατάσταση</h2>',
+        '          <p>Γραφείο αξιολόγησης, χώροι θεραπείας και πλήρως εξοπλισμένο γυμναστήριο '
+        'θεραπευτικής άσκησης, κάτω από την ίδια στέγη.</p>',
+        '        </div>',
+        '        <div class="space-grid reveal">%s</div>' % "".join(
+            photo_link(n, a, 0, "(max-width: 820px) 94vw, 600px") for n, a in HOME_SPACE),
+        '      </div>',
+        '    </section>',
+        '',
         '    <section class="services" id="services">',
         '      <div class="container">',
         '        <div class="section-head reveal">',
@@ -615,6 +712,7 @@ def build_home():
         '          <h2 class="section-title">Τέσσερα καθαρά βήματα</h2>',
         '        </div>',
         '        <div class="steps">%s</div>' % steps,
+        '        <div class="photo-row reveal">%s</div>' % photo_tiles(HOME_PROCESS, 0),
         '      </div>',
         '    </section>',
         '',
@@ -639,6 +737,16 @@ def build_home():
         '        <div class="services-grid">',
         "\n".join(ther_cards),
         '        </div>',
+        '      </div>',
+        '    </section>',
+        '',
+        '    <section class="moments" id="gallery">',
+        '      <div class="container">',
+        '        <div class="section-head reveal">',
+        '          <p class="eyebrow">Φωτογραφίες</p>',
+        '          <h2 class="section-title">Στιγμές από το κέντρο</h2>',
+        '        </div>',
+        '        <div class="photo-row photo-row--wrap reveal">%s</div>' % photo_tiles(HOME_GALLERY, 0),
         '      </div>',
         '    </section>',
         '',
@@ -729,7 +837,9 @@ def build_contact():
         '            <a href="ypiresies/index.html" class="btn btn-ghost">Οι υπηρεσίες μας</a>',
         '          </div>',
         '        </div>',
-        '        %s' % map_html,
+        '        <div class="contact-side"><figure class="lead-figure reveal">%s</figure>%s</div>'
+        % (photo_link(CONTACT_PHOTO, PHOTO_ALT[CONTACT_PHOTO], 0,
+                      "(max-width: 980px) 94vw, 560px"), map_html),
         '      </div>',
         '    </section>',
         '  </main>',
