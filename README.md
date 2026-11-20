@@ -73,6 +73,28 @@ sips -Z 900  πηγή.jpg --out s.jpg && cwebp -q 76 -metadata none s.jpg -o ass
 
 Οι φωτογραφίες ανοίγουν σε μεγέθυνση με κλικ (lightbox στο `main.js`).
 
+## SEO / GEO
+
+Εφαρμόστηκε το playbook της Astra (Νοέμβριος 2026). Όλα παράγονται από το `build.py`:
+
+- **Δομημένα δεδομένα.** Κάθε σελίδα έχει το ίδιο βασικό γράφημα (κέντρο `#clinic`,
+  φυσικοθεραπεύτρια `#tatiana-gkouvir`, `WebSite`) και δικό της schema που δείχνει σε αυτό:
+  `MedicalWebPage` με `author`/`reviewedBy`, `ProfilePage` στο βιογραφικό, `CollectionPage`
+  στις ενότητες, `ContactPage`, `BreadcrumbList`, `FAQPage`.
+- **Συχνές ερωτήσεις.** Το `FAQS` στο `structure.py` τροφοδοτεί και το ορατό κείμενο και το
+  `FAQPage`. Οι απαντήσεις λένε μόνο ό,τι γράφει ήδη η σελίδα.
+- **Meta.** Περιγραφές κομμένες στους 158 χαρακτήρες, `og:image` ανά σελίδα, sitemap με
+  εικόνες, `llms.txt`, γραμματοσειρές που δεν μπλοκάρουν, `?v=` στα CSS/JS.
+- **`vercel.json`.** `noindex` στο `*.vercel.app` (ώστε να ευρετηριαστεί μόνο το τελικό domain)
+  και cache στα assets.
+
+**Τοπικό SEO — εκκρεμεί.** Μόλις δοθούν διεύθυνση και τηλέφωνο, συμπληρώνονται στο `CONTACT`
+τα `street`, `locality`, `postal`, `region`, `lat`, `lng`, `maps_url` και το `locality_in`
+(π.χ. «στη Γλυφάδα»). Το `locality_in` μπαίνει αυτόματα στους τίτλους και στο h1 της αρχικής·
+τα υπόλοιπα στο schema, στα `geo.*` meta και στο `llms.txt`.
+
+Έλεγχος: `python3 ~/.claude/skills/seo-geo-playbook/scripts/seo_audit.py .` → 0 σφάλματα.
+
 ## Ξαναχτίσιμο
 
 ```bash

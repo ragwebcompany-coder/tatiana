@@ -524,7 +524,7 @@ a { color: inherit; text-decoration: none; }
   font-variant-numeric: lining-nums;
   font-feature-settings: "lnum" 1;
 }
-.svc h3 {
+.svc h3, .svc h2 {
   font-family: var(--serif);
   font-weight: 500;
   font-size: 1.55rem;
@@ -893,6 +893,45 @@ a.svc:hover .svc-more { color: var(--navy-ink); transform: translateX(4px); }
   .hero-split { grid-template-columns: 1fr; padding-top: 3rem; }
   .hero-photos { max-width: 560px; }
   .photo-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Home h1 wraps the eyebrow + the big title */
+.hero-h1 { margin: 0; font: inherit; }
+.hero-h1 > span { display: block; }
+.hero-h1 .eyebrow { margin-bottom: 1rem; }
+
+/* FAQ + byline */
+.faq { border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1.05rem 2.2rem 1.05rem 0;
+  position: relative;
+  font-weight: 500;
+  color: var(--cocoa);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+";
+  position: absolute;
+  right: 0.3rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--taupe-soft);
+  transition: transform .3s var(--ease);
+}
+.faq details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq details p { margin: 0 0 1.2rem; }
+.svc-body .byline {
+  clear: both;
+  margin: 2.6rem 0 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.86rem;
+  color: var(--taupe);
+  max-width: none;
 }
 
 .lightbox {

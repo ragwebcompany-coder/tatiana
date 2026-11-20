@@ -8,6 +8,7 @@ Generator για το site του Elite Physiotherapy by Tatiana Gkouwir.
 Ολο το περιεχομενο ζει στο _build/structure.py.
 """
 
+import hashlib
 import json
 import os
 import shutil
@@ -20,6 +21,7 @@ from structure import (  # noqa: E402
     HOME_STEPS, STRIP_WORDS, HOME_META,
     PHOTO_DIR, PHOTO_PORTRAIT, PHOTOS, HOME_PORTRAIT, HOME_SPACE,
     PHOTO_ALT, CARD_PHOTOS, HOME_HERO, HOME_PROCESS, HOME_GALLERY, CONTACT_PHOTO,
+    ABOUT_TYPE, CREDENTIALS, FAQS,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,6 +61,43 @@ def esc_attr(text):
     return meta_text(text).replace("&", "&amp;").replace('"', "&quot;")
 
 
+def esc_html(text):
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def clip(text, limit=158):
+    """Περιγραφη εως ~158 χαρακτηρες, κομμενη σε οριο λεξης."""
+    text = meta_text(text)
+    if len(text) <= limit:
+        return text
+    return text[:limit - 1].rsplit(" ", 1)[0].rstrip(" ,;:·—-(") + "…"
+
+
+def asset_version(name):
+    """Συντομο hash του αρχειου, για ?v= (μακρυ cache χωρις μπαγιατικα αρχεια)."""
+    with open(os.path.join(ROOT, name), "rb") as fh:
+        return hashlib.md5(fh.read()).hexdigest()[:8]
+
+
+def photo_url(name):
+    return "%s/%s/%s.webp" % (SITE["url"], PHOTO_DIR, name)
+
+
+def with_place(title):
+    """Προσθετει την περιοχη στον τιτλο, οταν εχει οριστει (π.χ. «στη Γλυφάδα»)."""
+    return "%s %s" % (title, CONTACT["locality_in"]) if CONTACT.get("locality_in") else title
+
+
+CLINIC_ID = SITE["url"] + "/#clinic"
+PERSON_ID = SITE["url"] + "/#tatiana-gkouvir"
+WEBSITE_ID = SITE["url"] + "/#website"
+DEFAULT_IMAGE = HOME_HERO[0]
+
+
+def ld(data):
+    return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+
+
 # --- CTA: αν δεν υπαρχει τηλεφωνο, ολα τα CTA δειχνουν στην επικοινωνια ---
 
 def cta_primary(depth):
@@ -88,45 +127,40 @@ def nav_cta(depth):
 # ---------------------------------------------------------------------------
 
 def business_schema():
-    data = {
-        "@context": "https://schema.org",
+    """Βασικο γραφημα καθε σελιδας: κεντρο + φυσικοθεραπευτρια + website."""
+    clinic = {
         "@type": ["Physiotherapy", "MedicalBusiness"],
-        "@id": SITE["url"] + "/#clinic",
+        "@id": CLINIC_ID,
         "name": meta_text(SITE["name"]),
         "alternateName": SITE["short"],
         "description": meta_text(HOME_META["description"]),
         "url": SITE["url"] + "/",
-        "image": SITE["url"] + "/" + SITE["logo"],
+        "image": [photo_url(n) for n, _ in HOME_SPACE],
         "logo": SITE["url"] + "/" + SITE["logo"],
         "medicalSpecialty": "Physiotherapy",
+        "knowsLanguage": ["el", "en"],
+        "founder": {"@id": PERSON_ID},
+        "employee": {"@id": PERSON_ID},
         "availableService": [],
-        "employee": {
-            "@type": "Person",
-            "name": meta_text(SITE["person"]),
-            "jobTitle": SITE["role"],
-            "alumniOf": {
-                "@type": "CollegeOrUniversity",
-                "name": "Αλεξάνδρειο Τεχνολογικό Εκπαιδευτικό Ίδρυμα Θεσσαλονίκης",
-            },
-            "memberOf": {
-                "@type": "Organization",
-                "name": "Πανελλήνιος Σύλλογος Φυσικοθεραπευτών",
-            },
-        },
     }
     for section in SECTIONS:
-        if section["slug"] != "ypiresies":
+        if section["slug"] == "fysikotherapeftria":
             continue
         for page in section["pages"]:
-            data["availableService"].append({
-                "@type": "MedicalTherapy",
+            key = "%s/%s" % (section["slug"], page["slug"])
+            kind = ABOUT_TYPE.get(key, "PhysicalTherapy")
+            clinic["availableService"].append({
+                "@type": "MedicalTherapy" if kind == "MedicalCondition" else kind,
                 "name": meta_text(page["title"]),
-                "url": "%s/%s/%s.html" % (SITE["url"], section["slug"], page["slug"]),
+                "url": "%s/%s.html" % (SITE["url"], key),
             })
     if CONTACT["phone"]:
-        data["telephone"] = CONTACT["phone"]
+        clinic["telephone"] = CONTACT["phone"]
+        clinic["contactPoint"] = [{"@type": "ContactPoint", "contactType": "appointments",
+                                   "telephone": CONTACT["phone"],
+                                   "availableLanguage": ["el", "en"]}]
     if CONTACT["email"]:
-        data["email"] = CONTACT["email"]
+        clinic["email"] = CONTACT["email"]
     if CONTACT["street"]:
         addr = {"@type": "PostalAddress", "streetAddress": CONTACT["street"],
                 "addressCountry": "GR"}
@@ -134,10 +168,82 @@ def business_schema():
             addr["addressLocality"] = CONTACT["locality"]
         if CONTACT["postal"]:
             addr["postalCode"] = CONTACT["postal"]
-        data["address"] = addr
+        if CONTACT.get("region"):
+            addr["addressRegion"] = CONTACT["region"]
+        clinic["address"] = addr
+    if CONTACT.get("lat") and CONTACT.get("lng"):
+        clinic["geo"] = {"@type": "GeoCoordinates",
+                         "latitude": CONTACT["lat"], "longitude": CONTACT["lng"]}
+    if CONTACT.get("maps_url"):
+        clinic["hasMap"] = CONTACT["maps_url"]
     if CONTACT["social"]:
-        data["sameAs"] = [u for _, u in CONTACT["social"]]
-    return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+        clinic["sameAs"] = [u for _, u in CONTACT["social"]]
+
+    person = {
+        "@type": "Person",
+        "@id": PERSON_ID,
+        "name": meta_text(SITE["person"]),
+        "alternateName": "Tatiana Gkouwir",
+        "jobTitle": SITE["role"],
+        "description": meta_text(SECTIONS[0]["lead"]),
+        "url": SITE["url"] + "/fysikotherapeftria/viografiko.html",
+        "image": photo_url(PHOTOS["fysikotherapeftria/viografiko"]["lead"][0]),
+        "worksFor": {"@id": CLINIC_ID},
+        "knowsLanguage": ["el", "en"],
+        "alumniOf": {"@type": "CollegeOrUniversity",
+                     "name": "Αλεξάνδρειο Τεχνολογικό Εκπαιδευτικό Ίδρυμα Θεσσαλονίκης"},
+        "memberOf": {"@type": "Organization",
+                     "name": "Πανελλήνιος Σύλλογος Φυσικοθεραπευτών"},
+        "hasCredential": [
+            {"@type": "EducationalOccupationalCredential", "name": name,
+             "recognizedBy": {"@type": "Organization", "name": org}}
+            for name, org in CREDENTIALS],
+        "knowsAbout": [meta_text(p["title"]) for sec in SECTIONS[1:] for p in sec["pages"]],
+    }
+    website = {"@type": "WebSite", "@id": WEBSITE_ID, "url": SITE["url"] + "/",
+               "name": meta_text(SITE["name"]), "inLanguage": "el",
+               "publisher": {"@id": CLINIC_ID}}
+    return ld({"@context": "https://schema.org", "@graph": [clinic, person, website]})
+
+
+def page_schema(section, page, canonical, photos):
+    """Schema σελιδας περιεχομενου· δειχνει στα @id του βασικου γραφηματος."""
+    key = "%s/%s" % (section["slug"], page["slug"])
+    data = {
+        "@context": "https://schema.org",
+        "@type": "MedicalWebPage",
+        "@id": canonical, "url": canonical,
+        "name": meta_text(page["title"]),
+        "description": meta_text(page["lead"]),
+        "inLanguage": "el",
+        "isPartOf": {"@id": WEBSITE_ID},
+        "datePublished": SITE["published"], "dateModified": SITE["lastmod"],
+        "author": {"@id": PERSON_ID},
+        "reviewedBy": {"@id": PERSON_ID},
+        "publisher": {"@id": CLINIC_ID},
+        "hasPart": [{"@type": "WebPageElement", "name": meta_text(v), "position": i}
+                    for i, v in enumerate((v for k, v in page["blocks"] if k == "h2"), start=1)],
+    }
+    if photos and photos.get("lead"):
+        data["primaryImageOfPage"] = photo_url(photos["lead"][0])
+    if key == "fysikotherapeftria/viografiko":
+        data["@type"] = "ProfilePage"
+        data["mainEntity"] = {"@id": PERSON_ID}
+        del data["author"], data["reviewedBy"]
+    elif section["slug"] == "fysikotherapeftria":
+        data["about"] = {"@id": PERSON_ID}
+    else:
+        data["about"] = {"@type": ABOUT_TYPE.get(key, "PhysicalTherapy"),
+                         "name": meta_text(page["title"])}
+    return ld(data)
+
+
+def faq_schema(key, canonical):
+    return ld({"@context": "https://schema.org", "@type": "FAQPage",
+               "@id": canonical + "#faq", "inLanguage": "el",
+               "mainEntity": [{"@type": "Question", "name": q,
+                               "acceptedAnswer": {"@type": "Answer", "text": a}}
+                              for q, a in FAQS[key]]})
 
 
 def breadcrumb_schema(trail):
@@ -145,51 +251,73 @@ def breadcrumb_schema(trail):
     for i, (name, href) in enumerate(trail, start=1):
         items.append({"@type": "ListItem", "position": i,
                       "name": meta_text(name), "item": href})
-    return json.dumps({"@context": "https://schema.org", "@type": "BreadcrumbList",
-                       "itemListElement": items},
-                      ensure_ascii=False, separators=(",", ":"))
+    return ld({"@context": "https://schema.org", "@type": "BreadcrumbList",
+               "itemListElement": items})
 
 
 # ---------------------------------------------------------------------------
 # Head / Nav / Footer
 # ---------------------------------------------------------------------------
 
-def head(title, description, canonical, depth, extra_ld=None, keywords=None):
+def head(title, description, canonical, depth, extra_ld=None, keywords=None,
+         image=None, og_type="website"):
     r = up(depth)
+    desc = clip(description).replace("&", "&amp;").replace('"', "&quot;")
+    image = image or DEFAULT_IMAGE
+    img_w, img_h = (1200, 1800) if image in PHOTO_PORTRAIT else (1800, 1200)
+    if extra_ld is None:
+        extra_ld = []
+    elif not isinstance(extra_ld, (list, tuple)):
+        extra_ld = [extra_ld]
     parts = [
         '<!DOCTYPE html>', '<html lang="el">', '<head>',
         '  <meta charset="UTF-8" />',
         '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
         '  <title>%s</title>' % title,
-        '  <meta name="description" content="%s" />' % esc_attr(description),
+        '  <meta name="description" content="%s" />' % desc,
     ]
     if keywords:
         parts.append('  <meta name="keywords" content="%s" />' % esc_attr(keywords))
     parts += [
-        '  <meta name="author" content="%s" />' % esc_attr(SITE["name"]),
-        '  <meta name="robots" content="index, follow, max-image-preview:large" />',
+        '  <meta name="author" content="%s" />' % esc_attr(SITE["person"]),
+        '  <meta name="robots" content="index, follow, max-image-preview:large, '
+        'max-snippet:-1, max-video-preview:-1" />',
         '  <meta name="theme-color" content="#1e3a5f" />',
         '  <link rel="canonical" href="%s" />' % canonical,
+    ]
+    if CONTACT.get("lat") and CONTACT.get("lng"):
+        parts += [
+            '  <meta name="geo.region" content="GR" />',
+            '  <meta name="geo.placename" content="%s" />' % esc_attr(CONTACT["locality"] or ""),
+            '  <meta name="geo.position" content="%s;%s" />' % (CONTACT["lat"], CONTACT["lng"]),
+            '  <meta name="ICBM" content="%s, %s" />' % (CONTACT["lat"], CONTACT["lng"]),
+        ]
+    parts += [
         '',
         '  <meta property="og:site_name" content="%s" />' % esc_attr(SITE["name"]),
         '  <meta property="og:locale" content="el_GR" />',
-        '  <meta property="og:type" content="website" />',
+        '  <meta property="og:type" content="%s" />' % og_type,
         '  <meta property="og:title" content="%s" />' % esc_attr(title),
-        '  <meta property="og:description" content="%s" />' % esc_attr(description),
+        '  <meta property="og:description" content="%s" />' % desc,
         '  <meta property="og:url" content="%s" />' % canonical,
-        '  <meta property="og:image" content="%s/%s" />' % (SITE["url"], SITE["logo"]),
+        '  <meta property="og:image" content="%s" />' % photo_url(image),
+        '  <meta property="og:image:width" content="%d" />' % img_w,
+        '  <meta property="og:image:height" content="%d" />' % img_h,
+        '  <meta property="og:image:alt" content="%s" />' % esc_attr(PHOTO_ALT[image]),
         '  <meta name="twitter:card" content="summary_large_image" />',
         '',
         '  <link rel="icon" type="image/jpeg" href="%s%s" />' % (r, SITE["logo"]),
         '  <link rel="apple-touch-icon" href="%s%s" />' % (r, SITE["logo"]),
         '  <link rel="preconnect" href="https://fonts.googleapis.com" />',
         '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />',
-        '  <link href="%s" rel="stylesheet" />' % FONTS,
-        '  <link rel="stylesheet" href="%sstyles.css" />' % r,
+        '  <link rel="preload" as="style" href="%s" />' % FONTS,
+        '  <link href="%s" rel="stylesheet" media="print" onload="this.media=\'all\'" />' % FONTS,
+        '  <noscript><link href="%s" rel="stylesheet" /></noscript>' % FONTS,
+        '  <link rel="stylesheet" href="%sstyles.css?v=%s" />' % (r, asset_version("styles.css")),
         '  <script type="application/ld+json">%s</script>' % business_schema(),
     ]
-    if extra_ld:
-        parts.append('  <script type="application/ld+json">%s</script>' % extra_ld)
+    for block in extra_ld:
+        parts.append('  <script type="application/ld+json">%s</script>' % block)
     parts += ['</head>', '<body>']
     return "\n".join(parts)
 
@@ -337,7 +465,7 @@ def footer(depth):
         'rel="noopener noreferrer">astra</a></p>',
         '    </div>',
         '  </footer>',
-        '  <script src="%smain.js" defer></script>' % r,
+        '  <script src="%smain.js?v=%s" defer></script>' % (r, asset_version("main.js")),
         '</body>',
         '</html>',
     ])
@@ -439,6 +567,25 @@ def render_blocks(blocks):
     return "\n".join(out)
 
 
+def faq_block(key):
+    if key not in FAQS:
+        return ""
+    items = "".join('<details><summary>%s</summary><p>%s</p></details>'
+                    % (esc_html(q), esc_html(a)) for q, a in FAQS[key])
+    return "\n".join(['        <h2 class="faq-title" id="faq">Συχνές ερωτήσεις</h2>',
+                      '        <div class="faq">%s</div>' % items])
+
+
+def byline(section):
+    href = "viografiko.html" if section["slug"] == "fysikotherapeftria" \
+        else "../fysikotherapeftria/viografiko.html"
+    return ('        <p class="byline">Επιμέλεια κειμένου: <a href="%s">%s</a>, %s, μέλος του '
+            'Πανελληνίου Συλλόγου Φυσικοθεραπευτών. Τελευταία ενημέρωση: '
+            '<time datetime="%s">%s</time>.</p>'
+            % (href, meta_text(SITE["person"]), SITE["role"], SITE["lastmod"],
+               SITE["lastmod_label"]))
+
+
 def aside(section, page):
     """Sticky πλαινη στηλη σελιδας περιεχομενου."""
     meta = []
@@ -487,15 +634,21 @@ def write(path, content):
 
 def build_leaf(section, page):
     canonical = "%s/%s/%s.html" % (SITE["url"], section["slug"], page["slug"])
-    title = "%s | %s" % (meta_text(page["title"]), SITE["short"])
+    key = "%s/%s" % (section["slug"], page["slug"])
+    name = page["title"] if section["slug"] == "fysikotherapeftria" else with_place(page["title"])
+    title = "%s | %s" % (name, SITE["short"])
     trail = [("Αρχική", SITE["url"] + "/"),
-             (section["title"], "%s/%s/index.html" % (SITE["url"], section["slug"])),
+             (section["title"], "%s/%s/" % (SITE["url"], section["slug"])),
              (page["title"], canonical)]
-    photos = PHOTOS.get("%s/%s" % (section["slug"], page["slug"]))
+    photos = PHOTOS.get(key)
     body = [b for b in (lead_figure(photos, 1), render_blocks(page["blocks"]),
-                        gallery(photos, 1)) if b]
+                        faq_block(key), gallery(photos, 1), byline(section)) if b]
+    schemas = [breadcrumb_schema(trail), page_schema(section, page, canonical, photos)]
+    if key in FAQS:
+        schemas.append(faq_schema(key, canonical))
     html = [
-        head(title, page["lead"], canonical, 1, breadcrumb_schema(trail)),
+        head(title, page["lead"], canonical, 1, schemas,
+             image=photos["lead"][0] if photos else None, og_type="article"),
         nav(1, section["slug"], page["slug"]),
         '  <main id="main">',
         '<nav class="crumbs container" aria-label="Διαδρομή">'
@@ -526,7 +679,7 @@ def build_leaf(section, page):
 
 
 def build_hub(section):
-    canonical = "%s/%s/index.html" % (SITE["url"], section["slug"])
+    canonical = "%s/%s/" % (SITE["url"], section["slug"])
     title = "%s | %s" % (meta_text(section["title"]), SITE["short"])
     trail = [("Αρχική", SITE["url"] + "/"), (section["title"], canonical)]
 
@@ -536,14 +689,29 @@ def build_hub(section):
         '        <a class="svc reveal" href="%s.html">' % page["slug"],
         card_thumb(section["slug"], page["slug"], 1),
         '          <span class="svc-num">%02d</span>' % i,
-        '          <h3>%s</h3>' % page["title"],
+        '          <h2>%s</h2>' % page["title"],
         '          <p>%s</p>' % page["lead"],
         '          <span class="svc-more">Μάθετε περισσότερα →</span>',
         '        </a>',
         ]
 
+    collection = ld({
+        "@context": "https://schema.org", "@type": "CollectionPage",
+        "@id": canonical, "url": canonical, "name": meta_text(section["title"]),
+        "description": meta_text(section["lead"]), "inLanguage": "el",
+        "isPartOf": {"@id": WEBSITE_ID}, "about": {"@id": CLINIC_ID},
+        "mainEntity": {"@type": "ItemList", "itemListElement": [
+            {"@type": "ListItem", "position": i, "name": meta_text(pg["title"]),
+             "url": "%s/%s/%s.html" % (SITE["url"], section["slug"], pg["slug"])}
+            for i, pg in enumerate(section["pages"], start=1)]},
+    })
+    first = PHOTOS.get("%s/%s" % (section["slug"], section["pages"][0]["slug"]))
+    title = "%s | %s" % (meta_text(section["title"]) if section["slug"] == "fysikotherapeftria"
+                         else with_place(meta_text(section["title"])), SITE["short"])
+
     html = [
-        head(title, section["lead"], canonical, 1, breadcrumb_schema(trail)),
+        head(title, section["lead"], canonical, 1, [breadcrumb_schema(trail), collection],
+             image=first["lead"][0] if first else None),
         nav(1, section["slug"]),
         '  <main id="main">',
         '<nav class="crumbs container" aria-label="Διαδρομή">'
@@ -571,8 +739,14 @@ def build_hub(section):
 
 
 def build_home():
-    canonical = SITE["url"] + "/index.html"
+    canonical = SITE["url"] + "/"
     sec = {s["slug"]: s for s in SECTIONS}
+    webpage = ld({"@context": "https://schema.org", "@type": "WebPage",
+                  "@id": canonical + "#webpage", "url": canonical,
+                  "name": meta_text(HOME_META["title"]), "inLanguage": "el",
+                  "isPartOf": {"@id": WEBSITE_ID}, "about": {"@id": CLINIC_ID},
+                  "primaryImageOfPage": photo_url(DEFAULT_IMAGE),
+                  "dateModified": SITE["lastmod"]})
 
     strip = "".join('<span>%s</span><span class="dot">•</span>' % w
                     for w in STRIP_WORDS * 2)
@@ -611,15 +785,16 @@ def build_home():
         ]
 
     html = [
-        head(HOME_META["title"], HOME_META["description"], canonical, 0,
+        head(HOME_META["title"], HOME_META["description"], canonical, 0, webpage,
              keywords=HOME_META["keywords"]),
         nav(0, home=True),
         '  <main id="main">',
         '    <section class="hero" id="hero">',
         '      <div class="hero-inner hero-split container">',
         '       <div class="hero-copy">',
-        '        <p class="eyebrow reveal">%s</p>' % SITE["tagline"],
-        '        <h1 class="hero-title reveal">Elite Physiotherapy<br /><em>by Tatiana Gkouwir</em></h1>',
+        '        <h1 class="hero-h1 reveal"><span class="eyebrow">%s</span> '
+        '<span class="hero-title">Elite Physiotherapy<br /><em>by Tatiana</em></span></h1>'
+        % with_place(SITE["tagline"]),
         '        <p class="hero-lead reveal">Σύγχρονο κέντρο φυσικοθεραπείας και αποκατάστασης, '
         'με εξειδικευμένες θεραπείες σε μυοσκελετικά και νευρολογικά προβλήματα — λεπτομερής '
         'αξιολόγηση, κλινικός συλλογισμός και ένα πλάνο φτιαγμένο για τη δική σας περίπτωση.</p>',
@@ -810,7 +985,11 @@ def build_contact():
                     'κέντρου. Για ραντεβού ή πληροφορίες, επικοινωνήστε μαζί μας.</div></div>')
 
     html = [
-        head(title, desc, canonical, 0, breadcrumb_schema(trail)),
+        head(title, desc, canonical, 0, [breadcrumb_schema(trail), ld({
+            "@context": "https://schema.org", "@type": "ContactPage", "@id": canonical,
+            "url": canonical, "name": "Επικοινωνία", "inLanguage": "el",
+            "isPartOf": {"@id": WEBSITE_ID}, "mainEntity": {"@id": CLINIC_ID}})],
+             image=CONTACT_PHOTO),
         nav(0, "epikoinonia"),
         '  <main id="main">',
         '<nav class="crumbs container" aria-label="Διαδρομή">'
@@ -849,23 +1028,62 @@ def build_contact():
     return write("epikoinonia.html", "\n".join(html) + "\n")
 
 
+def sitemap_image(path):
+    """Η κυρια φωτογραφια της σελιδας, για το <image:image> του sitemap."""
+    if path == "index.html":
+        return DEFAULT_IMAGE
+    if path == "epikoinonia.html":
+        return CONTACT_PHOTO
+    key = path[:-5]
+    if key.endswith("/index"):
+        sec = next(x for x in SECTIONS if x["slug"] == key.split("/")[0])
+        key = "%s/%s" % (sec["slug"], sec["pages"][0]["slug"])
+    return PHOTOS[key]["lead"][0] if key in PHOTOS else None
+
+
 def build_sitemap(paths):
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+             'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
     for path in paths:
         if path == "index.html":
             loc, prio = SITE["url"] + "/", "1.0"
         elif path.endswith("/index.html"):
-            loc, prio = "%s/%s" % (SITE["url"], path), "0.8"
+            loc, prio = "%s/%s" % (SITE["url"], path[:-len("index.html")]), "0.8"
         else:
             loc, prio = "%s/%s" % (SITE["url"], path), "0.6"
+        img = sitemap_image(path)
+        image = ('<image:image><image:loc>%s</image:loc></image:image>' % photo_url(img)) if img else ''
         lines.append('  <url><loc>%s</loc><lastmod>%s</lastmod>'
-                     '<changefreq>monthly</changefreq><priority>%s</priority></url>'
-                     % (loc, SITE["lastmod"], prio))
+                     '<changefreq>monthly</changefreq><priority>%s</priority>%s</url>'
+                     % (loc, SITE["lastmod"], prio, image))
     lines.append('</urlset>')
     write("sitemap.xml", "\n".join(lines) + "\n")
 
     write("robots.txt", "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % SITE["url"])
+
+
+def build_llms():
+    """llms.txt — συνοπτικος χαρτης του site για AI βοηθους."""
+    out = ["# %s" % meta_text(SITE["name"]), "",
+           "> %s" % meta_text(HOME_META["description"]), "",
+           "Φυσικοθεραπεύτρια: %s, πτυχιούχος Φυσικοθεραπείας Α.Τ.Ε.Ι. Θεσσαλονίκης (2017), "
+           "μέλος του Πανελληνίου Συλλόγου Φυσικοθεραπευτών." % meta_text(SITE["person"])]
+    if CONTACT["street"]:
+        out.append("Διεύθυνση: %s, %s %s." % (CONTACT["street"], CONTACT["locality"] or "",
+                                              CONTACT["postal"] or ""))
+    if CONTACT["phone"]:
+        out.append("Τηλέφωνο: %s." % CONTACT["phone_label"])
+    out.append("Ωράριο: %s" % CONTACT["hours"])
+    for section in SECTIONS:
+        out += ["", "## %s" % meta_text(section["title"]), ""]
+        for page in section["pages"]:
+            out.append("- [%s](%s/%s/%s.html): %s"
+                       % (meta_text(page["title"]), SITE["url"], section["slug"],
+                          page["slug"], meta_text(page["lead"])))
+    out += ["", "## Επικοινωνία", "",
+            "- [Επικοινωνία και ραντεβού](%s/epikoinonia.html)" % SITE["url"]]
+    write("llms.txt", "\n".join(out) + "\n")
 
 
 def copy_logo():
@@ -891,6 +1109,7 @@ def main():
         for page in section["pages"]:
             paths.append(build_leaf(section, page))
     build_sitemap(paths)
+    build_llms()
     print("Παρήχθησαν %d σελίδες + sitemap.xml + robots.txt" % len(paths))
     for p in paths:
         print("  " + p)
